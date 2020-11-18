@@ -12,8 +12,8 @@ PowerShell cmdlets and functions.
 > The PowerShell runtime invokes these **cmdlets** within the context of
 > automation scripts that are provided at the command line.  The PowerShell
 > runtime also invokes them programmatically through PowerShell APIs.
-> (Microsoft
-> Docs)[https://docs.microsoft.com/en-us/powershell/scripting/developer/]
+> (Microsoft Docs)[https://docs.microsoft.com/en-us/powershell/scripting/developer/]
+
 - **Get-Member** is a cmdlet we will use to describe the output of other
   PowerShell commands. It is aliased as **gm**.
 - **Import-Csv** is a cmdlet used to import CSV files into an object format that
