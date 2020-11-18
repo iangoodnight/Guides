@@ -767,3 +767,454 @@ Import-Csv  .\examples\csv\example.csv | Where-Object { $_."Part Number" -eq
 > The property is wrapped in quotes to deal with the white space between "Part"
 > and "Number" as this would cause an error.  Using the comparison operator
 > `-eq`, we are searching for "Part Numbers" that *equal* "201-100"
+
+**Output**
+
+```
+
+
+SKU         : 1004
+Name        : Tough Cookies
+Part Number : 201-100
+Qty         : 10
+Alt1        : 
+Alt2        : 
+Alt3        : 
+Option1     : Flavor
+Option2     : 
+
+SKU         : 1005
+Name        : Crumbled Cookies
+Part Number : 201-100
+Qty         : 10
+Alt1        : 
+Alt2        : 
+Alt3        : 
+Option1     : Flavor
+Option2     : 
+
+```
+
+As we can see from the output, we are now only displaying information relating
+to the products we are interested in.  In this case, cookies.  Let's run a
+similar command, but this time, let's look at cookies AND widgets.
+
+```
+Import-Csv .\examples\csv\example.csv | Where-Object { $_."Part Number" -in
+"101-100","201-100" }
+```
+> The comparison operator `-in` accepts a comma separated list of comparisons
+> and returns any items that matches at least one.
+
+**Output**
+
+```
+
+
+SKU         : 1001
+Name        : Red Widget
+Part Number : 101-100
+Qty         : 3
+Alt1        : 
+Alt2        : 
+Alt3        : 
+Option1     : Color
+Option2     : 
+
+SKU         : 1002
+Name        : Blue Widget
+Part Number : 101-100
+Qty         : 10
+Alt1        : 
+Alt2        : 
+Alt3        : 
+Option1     : Color
+Option2     : 
+
+SKU         : 1003
+Name        : Yellow Widget
+Part Number : 101-100
+Qty         : 10
+Alt1        : 
+Alt2        : 
+Alt3        : 
+Option1     : Color
+Option2     : 
+
+SKU         : 1004
+Name        : Tough Cookies
+Part Number : 201-100
+Qty         : 10
+Alt1        : 
+Alt2        : 
+Alt3        : 
+Option1     : Flavor
+Option2     : 
+
+SKU         : 1005
+Name        : Crumbled Cookies
+Part Number : 201-100
+Qty         : 10
+Alt1        : 
+Alt2        : 
+Alt3        : 
+Option1     : Flavor
+Option2     : 
+
+```
+
+No we are seeing the results of rows where the part number is "101-100" OR
+"201-100".  But, what about those empty fields, "Alt1", "Alt2", "Alt3", and
+"Option2"?
+
+### Select-Object
+
+Often, when dealing with raw CSV output from services we may subsribe to, the
+CSVs generated include extra, unneccessary or unwanted information.  Let's add
+on to our script to filter out this extra information.
+
+Let's got back to just looking at cookies, for simplicity's sake.
+
+```
+Import-Csv .\examples\csv\example.csv | where { $_."Part Number" -eq "201-100" }
+```
+> **where** is an *alias* for **Where-Object**
+
+For reference, here is our CSV once again.
+
+```
+SKU,Name,Part Number,Qty,Alt1,Alt2,Alt3,Option1,Option2
+1001,Red Widget,101-100,3,,,,Color,
+1002,Blue Widget,101-100,10,,,,Color,
+1003,Yellow Widget,101-100,10,,,,Color,
+1004,Tough Cookies,201-100,10,,,,Flavor,
+1005,Crumbled Cookies,201-100,10,,,,Flavor,
+1006,Ian's Hats,301-100,10,,,,,
+```
+
+We've seen how to filter out rows to pare our raw CSV down to the pertinent
+information, but what about all those extra blank columns?  In our example,
+"Alt1", "Alt2", "Alt3", and "Option2" are fields that are included in our
+report, but they are all blank.  Maybe they are a new feature that isn't yet
+populated, maybe they are data fields that we don't track in our organization.
+We can use **Select-Object** to filter them out giving us just the information
+we need.
+
+First, the documentation:
+```
+
+NAME
+    Select-Object
+    
+SYNOPSIS
+    Selects objects or object properties.
+    
+    
+SYNTAX
+    Select-Object [[-Property] <System.Object[]>] [-ExcludeProperty <System.String[]>] [-ExpandProperty 
+    <System.String>] [-First <System.Int32>] [-InputObject <System.Management.Automation.PSObject>] [-Last 
+    <System.Int32>] [-Skip <System.Int32>] [-Unique] [-Wait] [<CommonParameters>]
+    
+    Select-Object [[-Property] <System.Object[]>] [-ExcludeProperty <System.String[]>] [-ExpandProperty 
+    <System.String>] [-InputObject <System.Management.Automation.PSObject>] [-SkipLast <System.Int32>] [-Unique] 
+    [<CommonParameters>]
+    
+    Select-Object [-Index <System.Int32[]>] [-InputObject <System.Management.Automation.PSObject>] [-Unique] 
+    [-Wait] [<CommonParameters>]
+    
+    
+DESCRIPTION
+    The `Select-Object` cmdlet selects specified properties of an object or set of objects. It can also select 
+    unique objects, a specified number of objects, or objects in a specified position in an array.
+    
+    To select objects from a collection, use the First , Last , Unique , Skip , and Index parameters. To select 
+    object properties, use the Property parameter. When you select properties, `Select-Object` returns new objects 
+    that have only the specified properties.
+    
+    Beginning in Windows PowerShell 3.0, `Select-Object` includes an optimization feature that prevents commands 
+    from creating and processing objects that are not used.
+    
+    When you include a `Select-Object` command with the First or Index parameters in a command pipeline, 
+    PowerShell stops the command that generates the objects as soon as the selected number of objects is 
+    generated, even when the command that generates the objects appears before the `Select-Object` command in the 
+    pipeline. To turn off this optimizing behavior, use the Wait parameter.
+    
+
+RELATED LINKS
+    Online Version: https://docs.microsoft.com/powershell/module/microsoft.powershell.utility/select-object?view=po
+    wershell-5.1&WT.mc_id=ps-gethelp
+    Group-Object 
+    Sort-Object 
+    Where-Object 
+
+REMARKS
+    To see the examples, type: "get-help Select-Object -examples".
+    For more information, type: "get-help Select-Object -detailed".
+    For technical information, type: "get-help Select-Object -full".
+    For online help, type: "get-help Select-Object -online"
+
+```
+
+**Select-Object** has many useful flags including `-First` which accepts an
+integer and acts as a limit to output `-Last` which performs the inverser
+operation, and `-Unique` which behaves as you might expect, but the flag we are
+interested in is `-Property`.
+
+`-Property` accepts a comma separated list of the properties we are interested
+in seeing in our output.  Let's check out what that will look like.
+
+Hitting the ↑ arrow form our PowerShell will return our last command from
+history.  In my case, the last command we entered was:
+
+```
+Import-Csv .\examples\csv\example.csv | Where-Object { $_."Part Number" -eq
+"201-100" }
+```
+
+Now we need to pipe that command to the `Select-Object` command so we can select
+the properties we are interested in.  What were the properties of this CSV
+again?  We can pipe our last command to `Get-Member` (`gm`) to remind ourselves.
+
+```
+Import-Csv .\examples\csv\example.csv | Where-Object { $_."Part Number" -eq
+"201-100" } | Get-Member
+```
+
+**Output:**
+
+```
+
+
+   TypeName: System.Management.Automation.PSCustomObject
+
+Name        MemberType   Definition                    
+----        ----------   ----------                    
+Equals      Method       bool Equals(System.Object obj)
+GetHashCode Method       int GetHashCode()             
+GetType     Method       type GetType()                
+ToString    Method       string ToString()             
+Alt1        NoteProperty string Alt1=                  
+Alt2        NoteProperty string Alt2=                  
+Alt3        NoteProperty string Alt3=                  
+Name        NoteProperty string Name=Tough Cookies     
+Option1     NoteProperty string Option1=Flavor         
+Option2     NoteProperty string Option2=               
+Part Number NoteProperty string Part Number=201-100    
+Qty         NoteProperty string Qty=10                 
+SKU         NoteProperty string SKU=1004               
+
+```
+> You mah have noticed our headers are not in the same order they appeared in
+> our original CSV.  PowerShell alphabetizes our NoteProperties before
+> outputting them.
+
+Again, we are only interested in the `NotePropery` MemberTypes for the moment as
+these will correspond with our CSV headers (thanks to the output of
+`Import-Csv`).
+
+With this reminder still visible in my terminal, pressing ↑ twice (or pressing
+it once and removing the last pipe to `Get-Member`) gets us back to our script
+so far:
+
+```
+Import-Csv .\examples\csv\example.csv | Where-Object { $_."Part Number" -eq
+"201-100" }
+```
+
+Let's go ahead and pipe the output of this script to `Select-Object` to filter
+our output down to ONLY the populated columns (SKU, Name, Part Number, Qty, and
+Option1).
+
+```
+Import-Csv .\examples\csv\example.csv | Where-Object { $_."Part Number" -eq
+"201-100" } | Select-Object -Property SKU,Name,"Part Number",Qty,Option1
+```
+> Notice we are again wrapping 'Part Number' in quotes so as not to cause
+> problems with interpreting white space.  It is also worth noting that our list
+> of properties can be in any order and our output will match.
+
+**Output:**
+```
+
+
+SKU         : 1004
+Name        : Tough Cookies
+Part Number : 201-100
+Qty         : 10
+Option1     : Flavor
+
+SKU         : 1005
+Name        : Crumbled Cookies
+Part Number : 201-100
+Qty         : 10
+Option1     : Flavor
+
+```
+
+We have now removed our extraneous columns.  We can even use the same operation
+to change the order of our columns simply by changing the order we list them
+following the `-Property` flag.
+
+### ConvertTo-Csv
+
+Often when manipulating CSVs, we do so with the intention of uploading them as
+CSVs again into other systems.  What we have done so far has done a lot to clean
+up our data, but it has left it in state that isn't easy to import into other
+systems.  Let's look at **ConvertTo-Csv** to solve that issue for us.
+
+But first:
+
+```
+Get-Help CovertTo-Csv
+```
+
+**Output:**
+
+```
+
+
+NAME
+    ConvertTo-Csv
+    
+SYNOPSIS
+    Converts .NET objects into a series of comma-separated value (CSV) strings.
+    
+    
+SYNTAX
+    ConvertTo-Csv [-InputObject] <System.Management.Automation.PSObject> [[-Delimiter] <System.Char>] 
+    [-NoTypeInformation] [<CommonParameters>]
+    
+    ConvertTo-Csv [-InputObject] <System.Management.Automation.PSObject> [-NoTypeInformation] [-UseCulture] 
+    [<CommonParameters>]
+    
+    
+DESCRIPTION
+    The `ConvertTo-CSV` cmdlet returns a series of comma-separated value (CSV) strings that represent the objects that 
+    you submit. You can then use the `ConvertFrom-Csv` cmdlet to recreate objects from the CSV strings. The objects 
+    converted from CSV are string values of the original objects that contain property values and no methods.
+    
+    You can use the `Export-Csv` cmdlet to convert objects to CSV strings. `Export-CSV` is similar to `ConvertTo-CSV`, 
+    except that it saves the CSV strings to a file.
+    
+    The `ConvertTo-CSV` cmdlet has parameters to specify a delimiter other than a comma or use the current culture as 
+    the delimiter.
+    
+
+RELATED LINKS
+    Online Version: https://docs.microsoft.com/powershell/module/microsoft.powershell.utility/convertto-csv?view=powers
+    hell-5.1&WT.mc_id=ps-gethelp
+    ConvertFrom-Csv 
+    Export-Csv 
+    Import-Csv 
+
+REMARKS
+    To see the examples, type: "get-help ConvertTo-Csv -examples".
+    For more information, type: "get-help ConvertTo-Csv -detailed".
+    For technical information, type: "get-help ConvertTo-Csv -full".
+    For online help, type: "get-help ConvertTo-Csv -online"
+
+```
+
+For our purposes, this command will take no arguments or flags, as the piped
+output of `Select-Object` will act as the `-InputObject`.
+
+**The Command:**
+
+```
+Import-Csv .\examples\csv\example.csv | Where-Object { $_."Part Number" -eq
+"201-100" } | Select-Object -Property SKU,Name,"Part Number",Qty,Option1 |
+ConvertTo-Csv
+```
+
+**Output:**
+
+```
+#TYPE Selected.System.Management.Automation.PSCustomObject
+"SKU","Name","Part Number","Qty","Option1"
+"1004","Tough Cookies","201-100","10","Flavor"
+"1005","Crumbled Cookies","201-100","10","Flavor"
+```
+
+Awesome!  That is a much cleaner looking CSV!  Of course, it doesn't do us any
+good if we can't get it out of our PowerShell terminal...
+
+### Out-File
+
+The last piece of our puzzle is the **Out-File** command which redirects our
+piped output from the terminal to a file of our choosing.
+
+```
+Get-Help Out-File
+```
+
+**Output:**
+
+```
+
+NAME
+    Out-File
+    
+SYNOPSIS
+    Sends output to a file.
+    
+    
+SYNTAX
+    Out-File [-FilePath] <System.String> [[-Encoding] {ASCII | BigEndianUnicode 
+    | Default | OEM | String | Unicode | Unknown | UTF7 | UTF8 | UTF32}] 
+    [-Append] [-Force] [-InputObject <System.Management.Automation.PSObject>] 
+    [-NoClobber] [-NoNewline] [-Width <System.Int32>] [-Confirm] [-WhatIf] 
+    [<CommonParameters>]
+    
+    Out-File [[-Encoding] {ASCII | BigEndianUnicode | Default | OEM | String | 
+    Unicode | Unknown | UTF7 | UTF8 | UTF32}] [-Append] [-Force] [-InputObject 
+    <System.Management.Automation.PSObject>] -LiteralPath <System.String> 
+    [-NoClobber] [-NoNewline] [-Width <System.Int32>] [-Confirm] [-WhatIf] 
+    [<CommonParameters>]
+    
+    
+DESCRIPTION
+    The `Out-File` cmdlet sends output to a file. When you need to specify 
+    parameters for the output use `Out-File` rather than the redirection 
+    operator (`>`).
+    
+
+RELATED LINKS
+    Online Version: https://docs.microsoft.com/powershell/module/microsoft.power
+    shell.utility/out-file?view=powershell-5.1&WT.mc_id=ps-gethelp
+    about_Providers 
+    about_Quoting_Rules 
+    Out-Default 
+    Out-GridView 
+    Out-Host 
+    Out-Null 
+    Out-Printer 
+    Out-String 
+    Tee-Object 
+
+REMARKS
+    To see the examples, type: "get-help Out-File -examples".
+    For more information, type: "get-help Out-File -detailed".
+    For technical information, type: "get-help Out-File -full".
+    For online help, type: "get-help Out-File -online"
+
+```
+
+Just as our command begin with `Import-Csv` and a positional path parameter that
+pointed at our target, it will end with `Out-File` followed by the path where
+our finished file will end.  This is also your chance to name your file!
+
+**The Command:**
+
+```
+Import-Csv .\examples\csv\example.csv | Where-Object { $_."Part Number" -eq
+"201-100" } | Select-Object -Property SKU,Name,"Part Number",Qty,Option1 |
+Out-File .\examples\csv\finished.csv
+```
+
+This will save the file as "finished.csv" in my CSV directory.
+
+## Going Further
+
+With these tools, we can do a lot to transform, filter, and reduce raw reports
+as generated from various applications.  Explore the help documentation through
+`Get-Help` further for further commands, techniques, and examples.
