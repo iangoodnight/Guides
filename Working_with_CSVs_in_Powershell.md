@@ -23,7 +23,7 @@ PowerShell cmdlets and functions.
   filter our imported CSVs to return only the information we are interested in.
   This command can be aliased as **where**.
 - **Select-Object** is another multipurpose cmdlet that can be applied in a
-  variety of ways.  In this instance, we will use **Select-Object** or it's
+  variety of ways.  In this instance, we will use **Select-Object** or its
   alias, **select**, to return to us only the columns we are looking for.
 - **ConvertTo-Csv** is the cmdlet we will use to take our PowerShell object and
   turn it back into a spreadsheet-friendly CSV file.
@@ -143,7 +143,7 @@ PowerShell, like many other scripting languages, uses *pipes* to direct the
 output of one command into the input of another.  A pipe is represented as a
 vertical line like so: `|`
 
-**Get-Member** accepts, as it's input, a PowerShell cmdlet and outputs it
+**Get-Member** accepts, as its input, a PowerShell cmdlet and outputs it
 properties and methods.  So, for example, piping **Get-Help** to **Get-Member**
 as shown below:
 
@@ -221,7 +221,7 @@ Length           Property              int Length {get;}
 ```
 
 Notice the *pipe* `|` between `Get-Help` and `Get-Member`.  This tells
-`Get-Help` to *pipe* it's output to `Get-Member`.  Without the pipe, we would be
+`Get-Help` to *pipe* its output to `Get-Member`.  Without the pipe, we would be
 calling `Get-Help Get-Member` which would output the following:
 
 ```
@@ -679,5 +679,13 @@ REMARKS
     For online help, type: "get-help Where-Object -online"
 
 
+```
+
+We are going to use a *script block* to filter out unwanted input coming from
+out `Import-Csv` command.  A call to `Where-Object` with a script block might
+look like this:
+
+```
+Where-Object { $\_.Name -eq "Zaphod Beeblebox" }
 ```
 
