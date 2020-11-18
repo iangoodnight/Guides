@@ -1,24 +1,32 @@
-# Working with CSVs in Powershell
+# Working with CSVs in PowerShell
 
-Powershell has some impressive built in utilities for managing and filtering
+PowerShell has some impressive built in utilities for managing and filtering
 data sourced from CSV files.  Often, when working with large data sets, it can
 be beneficial to reduce the raw source data to the specific fields and
 conditions of interest. To do this, we are going to make use of several
-Powershell cmdlets and functions.
+PowerShell cmdlets and functions.
 
+## Cmdlets 
+
+> A cmdlet is a lightweight command that is used in the PowerShell environment.
+> The PowerShell runtime invokes these **cmdlets** within the context of
+> automation scripts that are provided at the command line.  The PowerShell
+> runtime also invokes them programmatically through PowerShell APIs.
+> (Microsoft
+> Docs)[https://docs.microsoft.com/en-us/powershell/scripting/developer/]
 - **Get-Member** is a cmdlet we will use to describe the output of other
-  Powershell commands. It is aliased as **gm**.
+  PowerShell commands. It is aliased as **gm**.
 - **Import-Csv** is a cmdlet used to import CSV files into an object format that
-  Powershell can reason with and manipulate.
+  PowerShell can reason with and manipulate.
 - **Where-Object** has a lot of utility.  For our purposes, we will use this to
   filter our imported CSVs to return only the information we are interested in.
   This command can be aliased as **where**.
 - **Select-Object** is another multipurpose cmdlet that can be applied in a
   variety of ways.  In this instance, we will use **Select-Object** or it's
   alias, **select**, to return to us only the columns we are looking for.
-- **ConvertTo-Csv** is the cmdlet we will use to take our Powershell object and
+- **ConvertTo-Csv** is the cmdlet we will use to take our PowerShell object and
   turn it back into a spreadsheet-friendly CSV file.
-- **Out-File** redirects our results from the Powershell terminal to a file of
+- **Out-File** redirects our results from the PowerShell terminal to a file of
   our choosing.
 - **Get-Help** (aliased as **help**) can be used with any of the above cmdlets
   (and others) to give us more information on the command we are using.  For
@@ -47,13 +55,13 @@ LONG DESCRIPTION
     functions, and scripts.
 
 
-  ONLINE HELP    
+  ONLINE HELP
     You can find help for Windows PowerShell online in the TechNet Library
     beginning at http://go.microsoft.com/fwlink/?LinkID=108518. 
 
     To open online help for any cmdlet or function, type:
 
-        Get-Help <cmdlet-name> -Online    
+        Get-Help <cmdlet-name> -Online
 
   UPDATE-HELP
     To download and install help files on your computer:
@@ -67,7 +75,7 @@ LONG DESCRIPTION
     display the help topics. You can also use the Update-Help cmdlet to
     download updated help files so that your local help files are always
     up-to-date.
-    
+
     For more information about the Update-Help cmdlet, type:
 
        Get-Help Update-Help -Online
@@ -84,9 +92,9 @@ LONG DESCRIPTION
     To get help for a cmdlet, type:
 
         Get-Help <cmdlet-name>
-    
+
     To get online help, type:
-   
+
         Get-Help <cmdlet-name> -Online    
 
     The titles of conceptual topics begin with "About_".
@@ -124,5 +132,8 @@ LONG DESCRIPTION
       Save-Help
       Update-Help
 ```
+
+Now that we have established some of the commands we will be using, let's look
+at chaining them together to perform meaningful transformations.
 
 
