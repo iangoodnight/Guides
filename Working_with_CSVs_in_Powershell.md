@@ -686,6 +686,84 @@ out `Import-Csv` command.  A call to `Where-Object` with a script block might
 look like this:
 
 ```
-Where-Object { $\_.Name -eq "Zaphod Beeblebox" }
+Where-Object { $_.Name -eq "Zaphod Beeblebox" }
 ```
 
+Note that the *script block* is a *positional parameter* meaning that the script
+expects the expression immediately following the call to `Where-Object` to be a
+script block.
+
+Script blocks begin and end with a curly brace.
+
+`{  }`
+
+With PowerShell, the variable `$_` refers to *this* record (or *this* row in the
+case of our CSV).
+
+`-eq` is a comparison operator (think of it as 'equals').  Try running the
+command `help comparison` to get a full list of comparison operators supported
+with PowerShell.
+
+Our call to `Where-Object` above won't function correctly, as it is not
+receiving and object as input.  Even if it were, our CSV doesn't seem to have a
+name propery.  Let's use `Get-Member` on the output of our call to `Import-Csv`
+one more time to remind of us of the properties we have available.
+
+```
+Import-Csv .\examples\csv\example.csv | gm
+```
+> **gm** is an *alias* for **Get-Member**
+
+**Output**
+
+```
+
+
+
+   TypeName: System.Management.Automation.PSCustomObject
+
+Name        MemberType   Definition                    
+----        ----------   ----------                    
+Equals      Method       bool Equals(System.Object obj)
+GetHashCode Method       int GetHashCode()             
+GetType     Method       type GetType()                
+ToString    Method       string ToString()             
+Alt1        NoteProperty string Alt1=                  
+Alt2        NoteProperty string Alt2=                  
+Alt3        NoteProperty string Alt3=                  
+Name        NoteProperty string Name=Red Widget        
+Option1     NoteProperty string Option1=Color          
+Option2     NoteProperty string Option2=               
+Part Number NoteProperty string Part Number=101-100    
+Qty         NoteProperty string Qty=3                  
+SKU         NoteProperty string SKU=1001               
+
+```
+
+And, as a reference, let's take a look at our CSV one more time.
+
+```
+SKU,Name,Part Number,Qty,Alt1,Alt2,Alt3,Option1,Option2
+1001,Red Widget,101-100,3,,,,Color,
+1002,Blue Widget,101-100,10,,,,Color,
+1003,Yellow Widget,101-100,10,,,,Color,
+1004,Tough Cookies,201-100,10,,,,Flavor,
+1005,Crumbled Cookies,201-100,10,,,,Flavor,
+1006,Ian's Hats,301-100,10,,,,,
+```
+
+We can see that all of our "Cookies" share a common "Part Number" (201-100).
+How might we write a script that returns to us only the information we are
+interested in, in this case, our cookie inventory items?
+
+**The Command**
+
+```
+Import-Csv  .\examples\csv\example.csv | Where-Object { $_."Part Number" -eq
+"201-100"}
+```
+> Note that following our *this* character, `$_` we access one of our
+> *NoteProperties* (headers) with a `.`
+> The property is wrapped in quotes to deal with the white space between "Part"
+> and "Number" as this would cause an error.  Using the comparison operator
+> `-eq`, we are searching for "Part Numbers" that *equal* "201-100"
