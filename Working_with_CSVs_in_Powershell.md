@@ -963,7 +963,7 @@ interested in is `-Property`.
 `-Property` accepts a comma separated list of the properties we are interested
 in seeing in our output.  Let's check out what that will look like.
 
-Hitting the ↑ arrow form our PowerShell will return our last command from
+Hitting the ↑ arrow from our PowerShell will return our last command from
 history.  In my case, the last command we entered was:
 
 ```
