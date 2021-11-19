@@ -1208,7 +1208,7 @@ our finished file will end.  This is also your chance to name your file!
 ```
 Import-Csv .\examples\csv\example.csv | Where-Object { $_."Part Number" -eq
 "201-100" } | Select-Object -Property SKU,Name,"Part Number",Qty,Option1 |
-Out-File .\examples\csv\finished.csv
+ConvertTo-Csv | Out-File .\examples\csv\finished.csv
 ```
 
 This will save the file as "finished.csv" in my CSV directory.
